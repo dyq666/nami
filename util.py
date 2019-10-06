@@ -1,4 +1,5 @@
 __all__ = (
+    'b64decode',
     'b64encode',
 )
 
@@ -8,6 +9,7 @@ from typing import Iterable, Optional, Any
 
 B64_VARS = ascii_uppercase + ascii_lowercase + digits + '+/='
 B64_MAP = {i: char for i, char in enumerate(B64_VARS)}
+B64_DECODE_MAP = {char: i for i, char in enumerate(B64_VARS)}
 
 
 def grouper(iterable: Iterable, n: int,
@@ -29,3 +31,13 @@ def b64encode(s: bytes) -> bytes:
     _mod = len(b64_chars) % 4
     b64_chars += '=' * (4 - _mod if _mod != 0 else 0)
     return b64_chars.encode('ascii')
+
+
+def b64decode(s: bytes) -> bytes:
+    b64_chars = s.decode('ascii')
+    b64_chars = b64_chars.rstrip('=')
+    t1 = ''.join(format(B64_DECODE_MAP[char], '06b') for char in b64_chars)
+    if len(t1) % 8 != 0:
+        t1 = t1[:-(len(t1) % 8)]
+    t2 = [int(''.join(i), 2) for i in grouper(t1, 8)]
+    return bytes(t2)

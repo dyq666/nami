@@ -1,7 +1,7 @@
 import base64
 import pytest
 
-from util import b64encode
+from util import b64decode, b64encode
 
 
 @pytest.mark.parametrize('string', (
@@ -15,3 +15,6 @@ from util import b64encode
 def test_base64(string):
     bytes_ = string.encode()
     assert b64encode(bytes_) == base64.b64encode(bytes_)
+
+    b64 = base64.b64encode(bytes_)
+    assert b64decode(b64) == base64.b64decode(b64)
