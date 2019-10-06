@@ -17,7 +17,7 @@ shell:
 	pipenv run python shell.py
 
 test:
-	pipenv run pytest test.py
+	pipenv run pytest -sx test.py
 
 venv:
 	pipenv shell
