@@ -1,5 +1,5 @@
 # cmd must use tab, not 4 space.
-# cmd must not has same name with directory in same directory.
+# cmd must not has same name with directory.
 
 install:
 	pipenv install
@@ -9,9 +9,6 @@ install:
 # W503 Line break occurred before a binary operator (迷之规则)
 pep8:
 	pipenv run pycodestyle --ignore=E501,E731,W503 ./
-
-server:
-	pipenv run flask run
 
 shell:
 	pipenv run python shell.py
