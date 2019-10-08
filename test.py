@@ -4,16 +4,20 @@ import pytest
 from util import b64decode, b64encode
 
 
-@pytest.mark.parametrize('string', (
+@pytest.mark.parametrize('str_', (
     'A',
     'AB',
     'ABC',
     'ABCD',
+    'ABCDE',
+    'ABCDEF',
+    'ABCDEFG',
+    'ABCDEFGH',
     'dsadAb3CD231---k==.',
     '大赛的cvce1',
 ))
-def test_base64(string):
-    bytes_ = string.encode()
+def test_base64(str_):
+    bytes_ = str_.encode()
     assert b64encode(bytes_) == base64.b64encode(bytes_)
 
     b64 = base64.b64encode(bytes_)
