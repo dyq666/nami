@@ -3,7 +3,7 @@ import base64
 import IPython
 from IPython.terminal.ipapp import load_default_config
 
-from util import b64decode, b64encode
+from base64_ import b64decode, b64encode
 
 context = {
     'base64': base64,

@@ -1,7 +1,7 @@
 import base64
 import pytest
 
-from util import b64decode, b64encode
+from base64_ import b64decode, b64encode
 
 
 @pytest.mark.parametrize('str_', (
