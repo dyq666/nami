@@ -1,5 +1,5 @@
 # cmd must use tab, not 4 space.
-# cmd must not has same name with directory.
+# cmd must not has same name with directory which is in current work place.
 
 install:
 	pipenv install
@@ -13,6 +13,8 @@ pep8:
 shell:
 	pipenv run python shell.py
 
+# -s, --capture=no disable all capturing
+# -x, --exitfirst  exit instantly on first error or failed test
 test:
 	pipenv run pytest -sx test.py
 
