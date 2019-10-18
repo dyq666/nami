@@ -6,9 +6,10 @@ from IPython.terminal.ipapp import load_default_config
 from base64_ import b64decode, b64encode
 
 context = {
-    'base64': base64,
     'b64decode': b64decode,
     'b64encode': b64encode,
+    'base64': base64,
+    'bin_': lambda number: format(number, '08b'),
 }
 
 names = '\n'.join(f'  - {var_name}' for var_name in context)
