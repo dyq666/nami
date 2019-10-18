@@ -9,6 +9,7 @@ pytest = "*"
 pycodestyle = "*"
 
 [packages]
+cryptography = "*"
 
 [requires]
 python_version = "3.6"
