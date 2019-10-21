@@ -3,9 +3,11 @@ import base64
 import IPython
 from IPython.terminal.ipapp import load_default_config
 
+from aes import AESCipher
 from base64_ import b64decode, b64encode
 
 context = {
+    'AESCipher': AESCipher,
     'b64decode': b64decode,
     'b64encode': b64encode,
     'base64': base64,
