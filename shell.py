@@ -5,10 +5,11 @@ from IPython.terminal.ipapp import load_default_config
 
 from aes import AESCipher
 from base64_ import b64decode, b64encode
-from rsa import RSAPrivateKey, RSAPublicKey
+from rsa import Mod12, RSAPrivateKey, RSAPublicKey
 
 context = {
     'AESCipher': AESCipher,
+    'Mod12': Mod12,
     'RSAPrivateKey': RSAPrivateKey,
     'RSAPublicKey': RSAPublicKey,
     'b64decode': b64decode,
