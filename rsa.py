@@ -142,7 +142,7 @@ class RSAPrivateKey:
 
     @classmethod
     def load(cls, content: bytes, password: Optional[bytes] = None
-                         ) -> 'RSAPrivateKey':
+             ) -> 'RSAPrivateKey':
         key = serialization.load_pem_private_key(
             data=content,
             password=password,
