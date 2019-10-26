@@ -73,6 +73,10 @@ class Mod12:
             return
         return self * other
 
+    def __pow__(self, other: 'Mod12') -> 'Mod12':
+        value = (self.v ** other.v) % 12
+        return type(self)(value)
+
     @classmethod
     def search_sub(cls):
         for i in range(12):
