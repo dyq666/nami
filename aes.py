@@ -1,5 +1,5 @@
 __all__ = (
-    'AESCipher',
+    'AES',
 )
 
 from cryptography.hazmat.backends import default_backend
@@ -8,7 +8,7 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 AES_BLOCK_BYTES_SIZE = algorithms.AES.block_size // 8
 
 
-class AESCipher:
+class AES:
 
     def __init__(self, key: bytes, iv: bytes):
         """len(iv) == 16 == algorithms.AES.block_size / 8"""

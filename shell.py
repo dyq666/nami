@@ -3,12 +3,12 @@ import base64
 import IPython
 from IPython.terminal.ipapp import load_default_config
 
-from aes import AESCipher
+from aes import AES
 from base64_ import b64decode, b64encode
 from rsa import Mod12, RSAPrivateKey, RSAPublicKey
 
 context = {
-    'AESCipher': AESCipher,
+    'AES': AES,
     'Mod12': Mod12,
     'RSAPrivateKey': RSAPrivateKey,
     'RSAPublicKey': RSAPublicKey,
