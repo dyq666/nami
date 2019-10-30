@@ -20,12 +20,14 @@
 
 __all__ = (
     'Hybrid',
+    'HybridHMAC',
 )
 
 import os
 from typing import Tuple
 
 from aes import AES
+from mac import HMAC
 from rsa import RSAPrivateKey, RSAPublicKey
 
 
@@ -52,3 +54,26 @@ class Hybrid:
         aes = AES(key, iv)
         plaintext = aes.decrypt(ciphertext)
         return plaintext
+
+
+class HybridHMAC:
+
+    @staticmethod
+    def encrypt(plaintext: bytes, public_key_pem: bytes):
+        plainkey: bytes = os.urandom(16)
+        hmac = HMAC(plainkey)
+        public_key = RSAPublicKey.load(public_key_pem)
+
+        mac = hmac.encrypt(plaintext)
+        cipherkey = public_key.encrypt(plainkey)
+        return cipherkey, mac
+
+    @staticmethod
+    def validate(plaintext: bytes, mac: bytes,
+                 private_key_pem: bytes, cipherkey) -> bool:
+        rsa_private = RSAPrivateKey.load(private_key_pem)
+
+        plainkey = rsa_private.decrypt(cipherkey)
+
+        hmac = HMAC(plainkey)
+        return mac == hmac.encrypt(plaintext)
