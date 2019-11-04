@@ -39,8 +39,9 @@
     Rn = (A * R(n-1) + C) mod M
 ```
 
-假设 A = 3, C = 0, M = 7, seed = 6, 那么生成的数列是 451326 的循环. 如果选择合适的 A, C, M 的值,
-可以让数列的周期变得很大. 但攻击者依然可以根据随机数和线性同余法的公式推测出 A, C, M 的值, 因此不满足强伪随机数.
+假设 A = 3, C = 0, M = 7, seed = 6, 那么生成的数列是 451326 的循环, 具体可以运行 `LinearCongruentialRandom.sample`.
+如果选择合适的 A, C, M 的值, 可以让数列的周期变得很大. 但攻击者依然可以根据随机数和线性同余法的公式推测出 A, C, M 的值,
+因此不满足强伪随机数.
 
 ### 单向散列函数法
 
@@ -101,7 +102,7 @@ class LinearCongruentialRandom:
 
     """伪随机数生成器 with 线性同余"""
 
-    def __init__(self, a: int = 3, c: int = 0, m: int = 7):
+    def __init__(self, a, c, m):
         self.a = a
         self.c = c
         self.m = m
@@ -114,6 +115,14 @@ class LinearCongruentialRandom:
         value = (self.a * self.state + self.c) % self.m
         self.state = value
         return value
+
+    @classmethod
+    def sample(cls):
+        r = cls(3, 0, 7)
+        r.seed(6)
+        for i in range(0, 100, 6):
+            print(''.join(str(r.random()) for _ in range(6)))
+
 
 
 class HashRandom:
