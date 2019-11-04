@@ -93,6 +93,7 @@ __all__ = (
     'HashRandom',
 )
 
+from datetime import datetime
 from hashlib import sha256
 
 from aes import AES
@@ -106,7 +107,7 @@ class LinearCongruentialRandom:
         self.a = a
         self.c = c
         self.m = m
-        self.state = 0
+        self.state = int(datetime.now().timestamp())
 
     def seed(self, value: int) -> None:
         self.state = value
@@ -124,13 +125,12 @@ class LinearCongruentialRandom:
             print(''.join(str(r.random()) for _ in range(6)))
 
 
-
 class HashRandom:
 
     """伪随机数生成器 with 单向散列函数"""
 
     def __init__(self):
-        self.state = 0
+        self.state = int(datetime.now().timestamp())
 
     def seed(self, value: int) -> None:
         self.state = value
@@ -147,7 +147,7 @@ class CryptoRandom:
 
     def __init__(self, key, iv):
         self.cipher = AES(key, iv)
-        self.state = 0
+        self.state = int(datetime.now().timestamp())
 
     def seed(self, value: int) -> None:
         self.state = value
