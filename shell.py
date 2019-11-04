@@ -5,10 +5,14 @@ from IPython.terminal.ipapp import load_default_config
 
 from aes import AES
 from base64_ import b64decode, b64encode
+from random_ import LinearCongruentialRandom, HashRandom, CryptoRandom
 from rsa import Mod12, RSAPrivateKey, RSAPublicKey
 
 context = {
     'AES': AES,
+    'CryptoRandom': CryptoRandom,
+    'LinearCongruentialRandom': LinearCongruentialRandom,
+    'HashRandom': HashRandom,
     'Mod12': Mod12,
     'RSAPrivateKey': RSAPrivateKey,
     'RSAPublicKey': RSAPublicKey,
