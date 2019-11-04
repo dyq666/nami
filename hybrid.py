@@ -23,7 +23,7 @@ __all__ = (
     'HybridHMAC',
 )
 
-import os
+import secrets
 from typing import Tuple
 
 from aes import AES
@@ -35,8 +35,8 @@ class Hybrid:
 
     @staticmethod
     def encrypt(plaintext: bytes, public_key_pem: bytes) -> Tuple[bytes, bytes]:
-        key: bytes = os.urandom(16)
-        iv: bytes = os.urandom(16)
+        key = secrets.token_bytes(16)
+        iv = secrets.token_bytes(16)
         aes = AES(key, iv)
         rsa_public = RSAPublicKey.load(public_key_pem)
 
@@ -60,7 +60,7 @@ class HybridHMAC:
 
     @staticmethod
     def encrypt(plaintext: bytes, public_key_pem: bytes):
-        plainkey: bytes = os.urandom(16)
+        plainkey = secrets.token_bytes(16)
         hmac = HMAC(plainkey)
         public_key = RSAPublicKey.load(public_key_pem)
 
