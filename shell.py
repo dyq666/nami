@@ -3,10 +3,10 @@ import base64
 import IPython
 from IPython.terminal.ipapp import load_default_config
 
-from aes import AES
 from base64_ import b64decode, b64encode
 from random_ import LinearCongruentialRandom, HashRandom, CryptoRandom
 from rsa import Mod12, RSAPrivateKey, RSAPublicKey
+from symmetric import AES, OneTimePad
 
 context = {
     'AES': AES,
@@ -14,6 +14,7 @@ context = {
     'LinearCongruentialRandom': LinearCongruentialRandom,
     'HashRandom': HashRandom,
     'Mod12': Mod12,
+    'OneTimePad': OneTimePad,
     'RSAPrivateKey': RSAPrivateKey,
     'RSAPublicKey': RSAPublicKey,
     'b64decode': b64decode,
