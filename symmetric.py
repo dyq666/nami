@@ -54,7 +54,7 @@ AES_BLOCK_BYTES_SIZE = algorithms.AES.block_size // 8
 
 class OneTimePad:
 
-    """一次性密码本"""
+    """一次性密码本, 以字节为单位进行加密解密, 因为一个字节的大小是 [0, 256), 所以密钥的大小也是这个."""
 
     @staticmethod
     def encrypt(plaintext: bytes) -> Tuple[bytes, bytes]:
