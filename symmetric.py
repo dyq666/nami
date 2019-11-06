@@ -58,7 +58,7 @@ class OneTimePad:
 
     @staticmethod
     def encrypt(plaintext: bytes) -> Tuple[bytes, bytes]:
-        key = bytes([secrets.choice(range(0, 255)) for _ in range(len(plaintext))])
+        key = bytes([secrets.choice(range(0, 256)) for _ in range(len(plaintext))])
         ciphertext = bytes([byte ^ key[i] for i, byte in enumerate(plaintext)])
         return ciphertext, key
 
