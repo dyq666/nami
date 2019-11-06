@@ -44,12 +44,10 @@ __all__ = (
 )
 
 import secrets
-from typing import Tuple, List
+from typing import Tuple
 
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-
-from util import sequence_grouper
 
 AES_BLOCK_BYTES_SIZE = algorithms.AES.block_size // 8
 
@@ -59,16 +57,14 @@ class OneTimePad:
     """一次性密码本"""
 
     @staticmethod
-    def encrypt(plaintext: bytes) -> Tuple[bytes, List[int]]:
-        key = [secrets.choice(range(0, 255)) for _ in range(len(plaintext))]
-        ciphertext = ''.join(format(byte ^ key[i], '08b') for i, byte in enumerate(plaintext))
-        ciphertext = bytes([int(group, 2) for group in sequence_grouper(ciphertext, size=8)])
+    def encrypt(plaintext: bytes) -> Tuple[bytes, bytes]:
+        key = bytes([secrets.choice(range(0, 255)) for _ in range(len(plaintext))])
+        ciphertext = bytes([byte ^ key[i] for i, byte in enumerate(plaintext)])
         return ciphertext, key
 
     @staticmethod
-    def decrypt(ciphertext: bytes, key: List[int]) -> bytes:
-        plaintext = ''.join(format(byte ^ key[i], '08b') for i, byte in enumerate(ciphertext))
-        plaintext = bytes([int(group, 2) for group in sequence_grouper(plaintext, size=8)])
+    def decrypt(ciphertext: bytes, key: bytes) -> bytes:
+        plaintext = bytes([byte ^ key[i] for i, byte in enumerate(ciphertext)])
         return plaintext
 
 
