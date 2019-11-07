@@ -3,7 +3,7 @@ import pytest
 
 from base64_ import b64decode, b64encode
 from rsa import Mod12
-from symmetric import OneTimePad
+from symmetric import Feistel, OneTimePad
 
 
 def test_oneTimePad():
@@ -11,6 +11,14 @@ def test_oneTimePad():
     plaintext = '带带我'.encode()
     ciphertext, key = OneTimePad.encrypt(plaintext)
     assert OneTimePad.decrypt(ciphertext, key) == plaintext
+
+
+def test_Feistel():
+    feistel = Feistel(10)
+    plaintext = 'ab'.encode()
+
+    ciphertext = feistel.encrypt(plaintext)
+    assert feistel.decrypt(ciphertext) == plaintext
 
 
 class TestMod12:

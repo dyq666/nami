@@ -36,10 +36,59 @@ A XOR B XOR B. 也就是等价于将每位都翻转两次或不翻转两次, 最
 所以实际上密钥的位数也不差明文太多. 我们用密钥加密了明文, 现在要发送密钥, 但密钥和明文大小差不多,
 也就是如果我们有办法安全的发送一个密钥, 那么我们就有办法安全的发送一个和密钥大小差不多的明文, 那么
 就不需要密钥了.
+
+### Feistel 网络
+
+Feistel 网络用于 DES 等算法, 加密的每一步称为轮 (round), 整个加密过程就是运算多个轮.
+下面是文字版流程图, 其中简化了子密钥和轮函数. 由于利用了 XOR 的特性, Feistel 网络加密和解密的步骤相同.
+
+```
+两轮
+
+加密
+
+L: zoe      zoe1      bob        bob1
+
+       ↑XOR       ↑↓        ↑XOR
+
+R: bob  ->  bob       zoe1   ->  zoe1
+
+解密
+
+L: bob1        bob      zoe1       zoe
+
+         ↑XOR       ↑↓       ↑XOR
+
+R: zoe1   ->   zoe1     bob   ->   bob
+
+
+三轮
+
+加密
+
+L: zoe      zoe1      bob        bob1      zoe1      zoe2
+
+       ↑XOR       ↑↓        ↑XOR       ↑↓        ↑XOR
+
+R: bob  ->  bob       zoe1   ->  zoe1      bob1       bob1
+
+解密
+
+L: zoe2      zoe1    bob1        bob      zoe1       zoe
+
+        ↑XOR      ↑↓       ↑XOR       ↑↓       ↑XOR
+
+R: bob1  ->  bob1    zoe1   ->   zoe1     bob   ->   bob
+```
+
+代码实现参考 `Feistel`, 其中简化了轮函数, 密钥和明文长度. 实际上轮函数可以是任意的算法, 因此算法就是返回自己本身
+也是有效的. 密钥全部使用一个固定值也可以看作是一个极端情况, 只不过加密和解密是使用的子密钥顺序应该相反,
+这部分内容没有体现在代码中. 明文长度也为了简单起见, 这里每一次只能加密 2 字节.
 """
 
 __all__ = (
     'AES',
+    'Feistel',
     'OneTimePad',
 )
 
@@ -66,6 +115,30 @@ class OneTimePad:
     def decrypt(ciphertext: bytes, key: bytes) -> bytes:
         plaintext = bytes([byte ^ key[i] for i, byte in enumerate(ciphertext)])
         return plaintext
+
+
+class Feistel:
+
+    """Feistel 网络"""
+
+    def __init__(self, count: int):
+        self.count = count
+        self.key = 255
+        self.algorithm = lambda x: x
+
+    def round(self, l, r):
+        new_l = self.algorithm(self.key ^ r) ^ l
+        return new_l, r
+
+    def encrypt(self, plaintext: bytes) -> bytes:
+        group = list(plaintext)
+        for i in range(self.count):
+            if i != 0:
+                group = reversed(group)
+            group = self.round(*group)
+        return bytes(group)
+
+    decrypt = encrypt
 
 
 class AES:
