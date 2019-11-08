@@ -27,7 +27,7 @@ import secrets
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
-from util import fill_str
+from util import fill_sequence
 
 
 class AESMode:
@@ -49,7 +49,7 @@ class AESMode:
     def filler(text: bytes) -> bytes:
         # aes 加密的明文字节数必须能被 16 整除
         bytes_size = algorithms.AES.block_size // 8
-        return fill_str(text, number=bytes_size, filler=b'\x01')
+        return fill_sequence(text, size=bytes_size, filler=b'\x01')
 
     @staticmethod
     def gen_key() -> bytes:
