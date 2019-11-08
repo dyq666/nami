@@ -4,10 +4,12 @@ __all__ = (
 )
 
 import math
-from typing import Any, Iterable, Optional, Sequence
+from typing import Any, Iterable, Optional, Union
+
+Seq = Union[str, bytes, list, tuple]
 
 
-def fill_sequence(sequence: Sequence, size: int, filler: Any) -> Sequence:
+def fill_sequence(sequence: Seq, size: int, filler: Any) -> Seq:
     """copy from https://github.com/dyq666/util"""
     if not isinstance(sequence, (str, bytes, list, tuple)):
         raise TypeError
@@ -21,7 +23,7 @@ def fill_sequence(sequence: Sequence, size: int, filler: Any) -> Sequence:
         return sequence + type(sequence)(filler for _ in range(filler_number))
 
 
-def sequence_grouper(sequence: Sequence, size: int,
+def sequence_grouper(sequence: Seq, size: int,
                      default: Optional[Any] = None) -> Iterable:
     """copy from https://github.com/dyq666/util"""
     if not isinstance(sequence, (str, bytes, list, tuple)):
