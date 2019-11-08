@@ -26,7 +26,7 @@ __all__ = (
 import secrets
 from typing import Tuple
 
-from aes import AES
+from block import AES
 from mac import HMAC
 from rsa import RSAPrivateKey, RSAPublicKey
 

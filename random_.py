@@ -96,7 +96,7 @@ __all__ = (
 from datetime import datetime
 from hashlib import sha256
 
-from symmetric import AES
+from block import AES
 
 
 class LinearCongruentialRandom:
