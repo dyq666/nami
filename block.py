@@ -1,11 +1,60 @@
-"""分组密码的模式"""
+"""分组密码的模式
+
+只能加密固定长度的算法, 如果要变成加密任意长度的算法, 就需要选择一种迭代的模式.
+例如对称加密中的 DES, AES 就是这种, 统称分组密码. 与之相反的就是流密码例如一次性密码本.
+
+## ECB 模式 (Electronic CodeBook)
+
+流程如下, 每个明文分组都分开加密, 由于使用的算法和密钥都是一样的, 因此
+相同的明文分组会得到相同的密文分组. 攻击者可以根据密文分组出现的频率来获取
+一些明文的线索.
+
+```
+明文分组1   明文分组2   明文分组3
+
+   ↓ 加密    ↓ 加密     ↓ 加密
+
+密文分组1   密文分组2   密文分组3
+```
+"""
 
 __all__ = (
     'AES',
 )
 
+import secrets
+
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+
+from util import fill_str
+
+
+class AESMode:
+
+    def __init__(self, key: bytes):
+        self.key = key
+
+    def ecb_encrpty(self, plaintext: bytes) -> bytes:
+        plaintext = self.filler(plaintext)
+        cipher = Cipher(
+            algorithm=algorithms.AES(self.key),
+            mode=modes.ECB(),
+            backend=default_backend()
+        )
+        encryptor = cipher.encryptor()
+        return encryptor.update(plaintext) + encryptor.finalize()
+
+    @staticmethod
+    def filler(text: bytes) -> bytes:
+        # aes 加密的明文字节数必须能被 16 整除
+        bytes_size = algorithms.AES.block_size // 8
+        return fill_str(text, number=bytes_size, filler=b'\x01')
+
+    @staticmethod
+    def gen_key() -> bytes:
+        # aes 密钥长度只能是 16, 24, 32, (单位: 字节)
+        return secrets.token_bytes(32)
 
 
 class AES:

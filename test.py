@@ -2,8 +2,26 @@ import base64
 import pytest
 
 from base64_ import b64decode, b64encode
+from block import AESMode
 from rsa import Mod12
 from symmetric import Feistel, OneTimePad
+
+"""test for block.py"""
+
+
+class TestAESMode:
+
+    def test_ecb_mode(self):
+        # aes 以 16 字节为一组进行加密, 因此 ECB 模式下,
+        # 如果两组内容一样, 那么加密的结果也是一样的
+        key = AESMode.gen_key()
+        aes = AESMode(key)
+        plaintext = b'1' * 32
+        ciphertext = aes.ecb_encrpty(plaintext)
+        assert ciphertext[:len(ciphertext) // 2] == ciphertext[len(ciphertext) // 2:]
+
+
+"""test for symmetric.py"""
 
 
 def test_oneTimePad():
@@ -20,6 +38,7 @@ def test_Feistel():
     ciphertext = feistel.encrypt(plaintext)
     assert feistel.decrypt(ciphertext) == plaintext
 
+"""test for rsa.py"""
 
 class TestMod12:
 
@@ -99,6 +118,9 @@ class TestMod12:
         assert x ** Mod12(11) == Mod12(7)
 
 
+"""test for base64_.py"""
+
+
 @pytest.mark.parametrize('str_', (
     'A',
     'AB',
@@ -117,6 +139,9 @@ def test_base64(str_):
 
     b64 = base64.b64encode(bytes_)
     assert b64decode(b64) == base64.b64decode(b64)
+
+
+"""test for binary"""
 
 
 def test_base_system():
