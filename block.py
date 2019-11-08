@@ -16,10 +16,30 @@
 
 密文分组1   密文分组2   密文分组3
 ```
+
+## CBC 模式 (Cipher Block Chaining)
+
+流程如下, 每个明文分组都需要与前一个密文 XOR 后再加密.
+
+```
+         明文分组1        明文分组2     明文分组3
+
+   ↑   →   ↓ XOR   ↑  →  ↓ XOR   ↑  →  ↓ XOR
+
+   ↑       ↓ 加密   ↑     ↓ 加密   ↑     ↓ 加密
+
+初始化向量     密文分组1      密文分组2     密文分组3
+
+初始化向量实际上就是一个虚假的密文分组, 需要和密文分组保持一致的大小. 因此在 AES
+中初始化向量应该是 16 字节.
+
+CBC 模式下, 任意一个明文分组不正确, 都会影响后面所有的解密.
+```
 """
 
 __all__ = (
     'AES',
+    'AESMode',
 )
 
 import secrets
@@ -40,6 +60,16 @@ class AESMode:
         cipher = Cipher(
             algorithm=algorithms.AES(self.key),
             mode=modes.ECB(),
+            backend=default_backend()
+        )
+        encryptor = cipher.encryptor()
+        return encryptor.update(plaintext) + encryptor.finalize()
+
+    def cbc_encrpty(self, plaintext: bytes, iv: bytes) -> bytes:
+        plaintext = self.filler(plaintext)
+        cipher = Cipher(
+            algorithm=algorithms.AES(self.key),
+            mode=modes.CBC(iv),
             backend=default_backend()
         )
         encryptor = cipher.encryptor()
