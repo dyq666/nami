@@ -56,20 +56,18 @@ class AESMode:
         self.key = key
 
     def ecb_encrpty(self, plaintext: bytes) -> bytes:
-        plaintext = self.filler(plaintext)
-        cipher = Cipher(
-            algorithm=algorithms.AES(self.key),
-            mode=modes.ECB(),
-            backend=default_backend()
-        )
-        encryptor = cipher.encryptor()
-        return encryptor.update(plaintext) + encryptor.finalize()
+        mode = modes.ECB()
+        return self._encrypt(plaintext, mode)
 
     def cbc_encrpty(self, plaintext: bytes, iv: bytes) -> bytes:
+        mode = modes.CBC(iv)
+        return self._encrypt(plaintext, mode)
+
+    def _encrypt(self, plaintext: bytes, mode) -> bytes:
         plaintext = self.filler(plaintext)
         cipher = Cipher(
             algorithm=algorithms.AES(self.key),
-            mode=modes.CBC(iv),
+            mode=mode,
             backend=default_backend()
         )
         encryptor = cipher.encryptor()
