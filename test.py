@@ -3,11 +3,33 @@ import secrets
 import pytest
 
 from base64_ import b64decode, b64encode
-from block import AESMode
-from rsa import Mod12
+from block import AES, AESMode
+from rsa import Mod12, RSAPrivateKey, RSAPublicKey
 from symmetric import Feistel, OneTimePad
 
 """test for block.py"""
+
+
+class TestAES:
+
+    key = secrets.token_bytes(16)
+    iv = secrets.token_bytes(16)
+    ciper = AES(key, iv)
+
+    def test_filler(self):
+        """确保填充字符等于需要填充的个数"""
+        for i in range(1, 17):
+            content = b'-' * i
+            encrypted_content = self.ciper.encrypt(content)
+            decryptor = self.ciper.cipher.decryptor()
+            decrypted_content = decryptor.update(encrypted_content) + decryptor.finalize()
+            assert decrypted_content[-1] == 16 - (i % 16)
+
+    def test_encrypt_and_decrypt(self):
+        for i in range(1, 17):
+            content = b'-' * i
+            encrypted_content = self.ciper.encrypt(content)
+            assert content == self.ciper.decrypt(encrypted_content)
 
 
 class TestAESMode:
@@ -132,6 +154,21 @@ class TestMod12:
         assert x ** Mod12(9) == Mod12(7)
         assert x ** Mod12(10) == Mod12(1)
         assert x ** Mod12(11) == Mod12(7)
+
+
+class TestRsa:
+
+    def test_load_private_key(self):
+        """load 后的 private key 应该生成一样的 public key"""
+        private_key = RSAPrivateKey.generate()
+        private_key2 = RSAPrivateKey.load(private_key.format_private_key())
+        assert private_key.format_public_key() == private_key2.format_public_key()
+
+    def test_encrpty_and_decrpty(self):
+        content = '带带我666'.encode()
+        private_key = RSAPrivateKey.generate()
+        public_key = RSAPublicKey.load(private_key.format_public_key())
+        assert private_key.decrypt(public_key.encrypt(content)) == content
 
 
 """test for base64_.py"""
