@@ -30,7 +30,7 @@ class BirthdayParadox:
     @staticmethod
     def probability(y: int, n: int) -> float:
         """假设一年有 `y` 天, 求从 `n` 个人中找到两个相同生日的概率."""
-        seq = [1.0] + [number for number in range(y, y - n, -1)]
+        seq = [1.0] + [number / y for number in range(y, y - n, -1)]
         not_same_p = reduce(mul, seq)
         return 1 - not_same_p
 
