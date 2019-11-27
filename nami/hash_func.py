@@ -9,6 +9,10 @@
 目前比较安全的是 SHA 二代和三代, 例如 `from hashlib import sha256, sha3_256`.
 """
 
+__all__ = (
+    'BirthdayParadox',
+)
+
 from functools import partialmethod, reduce
 from operator import mul
 
