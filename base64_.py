@@ -46,7 +46,7 @@ __all__ = (
 
 from string import ascii_uppercase, ascii_lowercase, digits
 
-from util import fill_sequence, sequence_grouper
+from util import fill_seq, seq_grouper
 
 B64_CHARS = ascii_uppercase + ascii_lowercase + digits + '+/'
 # 6 位二进制 -> char, 表中记录二进制比十进制在 base64 的编码解码过程中更加方便 (不是通过理论得出的, 仅从 Python 编写代码的角度上考虑)
@@ -58,10 +58,10 @@ def b64encode(s: bytes) -> bytes:
     # 二进制字符串
     bin_str = ''.join(format(b, '08b') for b in s)
     # 二进制字符串分组, 每组 6 个, 不足用 '0' 补齐
-    six_group = (str_ for str_ in sequence_grouper(bin_str, 6, '0'))
+    six_group = (str_ for str_ in seq_grouper(bin_str, 6, '0'))
     # 按 base64 表转换
     b64_chars = ''.join(B64_ENCODE_MAP[i] for i in six_group)
-    b64_chars = fill_sequence(b64_chars, 4, '=')
+    b64_chars = fill_seq(b64_chars, 4, '=')
     return b64_chars.encode('ascii')
 
 
@@ -73,5 +73,5 @@ def b64decode(s: bytes) -> bytes:
     # 二进制字符串分组, 每组 8 个, 余下部分删除 (余下的部分实际上编码过程中补充的 '0')
     if len(bin_str) % 8 != 0:
         bin_str = bin_str[:-(len(bin_str) % 8)]
-    eight_group = (str_ for str_ in sequence_grouper(bin_str, 8))
+    eight_group = (str_ for str_ in seq_grouper(bin_str, 8))
     return bytes(int(i, 2) for i in eight_group)
