@@ -11,7 +11,7 @@ Seq = Union[str, bytes, list, tuple]
 
 
 class Binary:
-    """copy from https://github.com/dyq666/sanji """
+    """copy from https://github.com/dyq666/sanji"""
 
     xor_map = {
         ('0', '0'): '0',
@@ -30,22 +30,66 @@ class Binary:
 
     @classmethod
     def bytes_xor(cls, b1: bytes, b2: bytes) -> bytes:
-        s1 = cls.bytes_2_str(b1)
-        s2 = cls.bytes_2_str(b2)
-        return cls.str_2_bytes(cls.str_xor(s1, s2))
+        """XOR 两个字节序列."""
+        return bytes(item1 ^ item2 for item1, item2 in zip(b1, b2))
 
     @classmethod
     def str_2_bytes(cls, s: str) -> bytes:
-        """将 8 位二进制字符串转为字节."""
+        """将 8 位二进制字符串转为字节序列."""
         if len(s) % 8 != 0:
             raise ValueError
 
-        return bytes(int(item, 2) for item in seq_grouper(s, 8))
+        return bytes(cls.str_2_int(item) for item in seq_grouper(s, 8))
+
+    @classmethod
+    def hexstr_2_bytes(cls, s: str) -> bytes:
+        """将 2 位十六进制字符串转为字节序列."""
+        if len(s) % 2 != 0:
+            raise ValueError
+
+        return bytes(cls.hexstr_2_int(item) for item in seq_grouper(s, 2))
 
     @classmethod
     def bytes_2_str(cls, b: bytes) -> str:
-        """将字节转为 8 位二进制字符串."""
-        return ''.join(format(byte, '08b') for byte in b)
+        """将字节序列转为 8 位二进制字符串."""
+        return ''.join(cls.int_2_str(byte) for byte in b)
+
+    @classmethod
+    def bytes_2_hexstr(cls, b: bytes) -> str:
+        """将字节序列转为 2 位十六进制字符串."""
+        return ''.join(cls.int_2_hexstr(byte) for byte in b)
+
+    @staticmethod
+    def int_2_str(i: int) -> str:
+        """将 [0, 255] 之间的整数转为 1 字节的 8 位二进制字符串."""
+        if not 0 <= i <= 255:
+            raise ValueError
+
+        return format(i, '08b')
+
+    @staticmethod
+    def int_2_hexstr(i: int) -> str:
+        """将 [0, 255] 之间的整数转为 1 字节的 2 位十六进制字符串."""
+        if not 0 <= i <= 255:
+            raise ValueError
+
+        return format(i, '02x')
+
+    @staticmethod
+    def str_2_int(s: str) -> int:
+        """将 1 字节的 8 位二进制字符串转为整数."""
+        if len(s) != 8:
+            raise ValueError
+
+        return int(s, 2)
+
+    @staticmethod
+    def hexstr_2_int(s: str) -> int:
+        """将 1 字节的 2 位十六进制字符串转为整数."""
+        if len(s) != 2:
+            raise ValueError
+
+        return int(s, 16)
 
 
 def fill_seq(seq: Seq, size: int, filler: Any) -> Seq:
