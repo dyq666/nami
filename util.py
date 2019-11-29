@@ -9,6 +9,7 @@ __all__ = (
 import math
 from typing import TYPE_CHECKING, Any, Iterable, Optional, Union
 
+from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding, rsa
@@ -135,6 +136,16 @@ class RSAPrivateKey:
             format=serialization.PublicFormat.SubjectPublicKeyInfo
         )
 
+    def sign(self, msg: bytes) -> bytes:
+        return self.key.sign(
+            data=msg,
+            padding=padding.PSS(
+                mgf=padding.MGF1(hashes.SHA256()),
+                salt_length=padding.PSS.MAX_LENGTH,
+            ),
+            algorithm=hashes.SHA256(),
+        )
+
     @classmethod
     def generate(cls) -> 'RSAPrivateKey':
         # 参考 https://cryptography.io/en/latest/hazmat/primitives/asymmetric/rsa/#generation
@@ -172,6 +183,21 @@ class RSAPublicKey:
                 label=None,
             ),
         )
+
+    def verify(self, signature, msg) -> bool:
+        try:
+            self.key.verify(
+                signature=signature,
+                data=msg,
+                padding=padding.PSS(
+                    mgf=padding.MGF1(hashes.SHA256()),
+                    salt_length=padding.PSS.MAX_LENGTH,
+                ),
+                algorithm=hashes.SHA256(),
+            )
+            return True
+        except InvalidSignature:
+            return False
 
     @classmethod
     def load(cls, content: bytes) -> 'RSAPublicKey':
