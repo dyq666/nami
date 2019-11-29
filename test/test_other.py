@@ -4,8 +4,9 @@ import pytest
 
 from base64_ import b64decode, b64encode
 from block import AES, AESMode
-from rsa import Mod12, RSAPrivateKey, RSAPublicKey
+from rsa import Mod12
 from symmetric import Feistel, OneTimePad
+from util import RSAPrivateKey, RSAPublicKey
 
 """test for block.py"""
 

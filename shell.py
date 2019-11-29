@@ -5,7 +5,6 @@ from IPython.terminal.ipapp import load_default_config
 
 from base64_ import b64decode, b64encode
 from random_ import LinearCongruentialRandom, HashRandom, CryptoRandom
-from rsa import Mod12, RSAPrivateKey, RSAPublicKey
 from symmetric import OneTimePad, Feistel
 
 context = {
