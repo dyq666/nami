@@ -1,62 +1,10 @@
 import base64
-import secrets
 import pytest
 
 from base64_ import b64decode, b64encode
-from block import AES, AESMode
 from rsa import Mod12
 from symmetric import Feistel, OneTimePad
 from util import RSAPrivateKey, RSAPublicKey
-
-"""test for block.py"""
-
-
-class TestAES:
-
-    key = secrets.token_bytes(16)
-    iv = secrets.token_bytes(16)
-    ciper = AES(key, iv)
-
-    def test_filler(self):
-        """确保填充字符等于需要填充的个数"""
-        for i in range(1, 17):
-            content = b'-' * i
-            encrypted_content = self.ciper.encrypt(content)
-            decryptor = self.ciper.cipher.decryptor()
-            decrypted_content = decryptor.update(encrypted_content) + decryptor.finalize()
-            assert decrypted_content[-1] == 16 - (i % 16)
-
-    def test_encrypt_and_decrypt(self):
-        for i in range(1, 17):
-            content = b'-' * i
-            encrypted_content = self.ciper.encrypt(content)
-            assert content == self.ciper.decrypt(encrypted_content)
-
-
-class TestAESMode:
-
-    def test_ecb_mode(self):
-        key = AESMode.gen_key()
-        aes = AESMode(key)
-        plaintext = b'1' * 32
-        ciphertext = aes.ecb_encrpty(plaintext)
-        # 两组内容相同都是 b'1....', 加密后相同.
-        assert ciphertext[:len(ciphertext) // 2] == ciphertext[len(ciphertext) // 2:]
-
-    def test_cbc_mode(self):
-        key = AESMode.gen_key()
-        iv = secrets.token_bytes(16)
-        aes = AESMode(key)
-
-        plain_l, plain_r = b'1' * 16, b'1' * 16
-        ciphertext = aes.cbc_encrpty(plain_l + plain_r, iv)
-        cipher_l, cipher_r = ciphertext[:len(ciphertext) // 2], ciphertext[len(ciphertext) // 2:]
-        # 两组内容相同都是 b'1....', 加密后不同.
-        assert cipher_l != cipher_r
-
-        # 第一组加密的结果作为第二组的 iv 对第二组加密, 和两组一起加密的结果相同
-        assert aes.cbc_encrpty(plain_r, cipher_l) == cipher_r
-
 
 """test for symmetric.py"""
 
