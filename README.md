@@ -12,4 +12,5 @@
   - 7.单向散列函数 nami/hash_func
   - 8.消息认证码 nami/message_auth
   - 9.数字签名 nami/digital_signature
+  - 10.证书 nami/certificate
   - 12.随机数 nami/random_
