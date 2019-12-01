@@ -46,3 +46,37 @@ class TestAESMode:
         msg = b'1' * AES.BLOCK_SIZE
         msg1 = Binary.bytes_xor(msg, iv)
         assert AES(modes.CBC(iv), key=key).encrypt(msg) == AES(modes.ECB(), key=key).encrypt(msg1)
+
+    def test_cfb(self):
+        # `msg` 的长度可以是任意长度
+        aes = AES(modes.CFB(secrets.token_bytes((AES.BLOCK_SIZE))))
+        assert aes.encrypt(b'1')
+
+        # 前一组先加密再 xor.
+        iv = secrets.token_bytes(AES.BLOCK_SIZE)
+        key = secrets.token_bytes(32)
+        cfb = AES(modes.CFB(iv), key=key)
+        ecb = AES(modes.ECB(), key=key)
+        msg1, msg2 = b'1' * AES.BLOCK_SIZE, b'2' * AES.BLOCK_SIZE
+        cipher = cfb.encrypt(msg1 + msg2)
+        cipher1, cipher2 = cipher[:AES.BLOCK_SIZE], cipher[AES.BLOCK_SIZE:]
+        assert cipher1 == Binary.bytes_xor(ecb.encrypt(iv), msg1)
+        assert cipher2 == Binary.bytes_xor(ecb.encrypt(cipher1), msg2)
+
+    def test_ofb(self):
+        # `msg` 的长度可以是任意长度
+        aes = AES(modes.OFB(secrets.token_bytes((AES.BLOCK_SIZE))))
+        assert aes.encrypt(b'1')
+
+        # 前一组先加密再 xor.
+        iv = secrets.token_bytes(AES.BLOCK_SIZE)
+        key = secrets.token_bytes(32)
+        cfb = AES(modes.OFB(iv), key=key)
+        ecb = AES(modes.ECB(), key=key)
+        msg1, msg2 = b'1' * AES.BLOCK_SIZE, b'2' * AES.BLOCK_SIZE
+        cipher = cfb.encrypt(msg1 + msg2)
+        cipher1, cipher2 = cipher[:AES.BLOCK_SIZE], cipher[AES.BLOCK_SIZE:]
+        key1 = ecb.encrypt(iv)
+        key2 = ecb.encrypt(key1)
+        assert cipher1 == Binary.bytes_xor(key1, msg1)
+        assert cipher2 == Binary.bytes_xor(key2, msg2)
