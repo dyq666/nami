@@ -13,4 +13,7 @@
   - 8.消息认证码 nami/message_auth
   - 9.数字签名 nami/digital_signature
   - 10.证书 nami/certificate
+  - [ ] 11.密钥
   - 12.随机数 nami/random_
+  - [ ] 13.PGP
+  - [ ] 14.SSL/TLS
