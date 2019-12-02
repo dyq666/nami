@@ -17,3 +17,5 @@
   - 12.随机数 nami/random_
   - [ ] 13.PGP
   - [ ] 14.SSL/TLS
+
+  - 番外1.Base64 nami/base64_
