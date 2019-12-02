@@ -46,7 +46,7 @@ __all__ = (
 
 from string import ascii_uppercase, ascii_lowercase, digits
 
-from util import Binary, fill_seq, seq_grouper, strip_seq
+from nami.util import Binary, fill_seq, seq_grouper, strip_seq
 
 B64_CHARS = ascii_uppercase + ascii_lowercase + digits + '+/'
 # 6 位二进制 -> char, 表中记录二进制比十进制在 base64 的编码解码过程中更加方便 (不是通过理论得出的, 仅从 Python 编写代码的角度上考虑)

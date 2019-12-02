@@ -1,4 +1,4 @@
-from util import RSAPrivateKey, RSAPublicKey
+from nami.util import RSAPrivateKey, RSAPublicKey
 
 
 def test_rsa_signature():

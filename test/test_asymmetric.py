@@ -1,5 +1,5 @@
 from nami.asymmetric import Mod12
-from util import RSAPrivateKey, RSAPublicKey
+from nami.util import RSAPrivateKey, RSAPublicKey
 
 
 class TestMod12:

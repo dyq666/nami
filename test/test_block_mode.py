@@ -4,7 +4,7 @@ import pytest
 from cryptography.hazmat.primitives.ciphers import modes
 
 from nami.block_mode import AES
-from util import Binary
+from nami.util import Binary
 
 
 class TestAESMode:

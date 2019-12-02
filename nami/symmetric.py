@@ -13,7 +13,7 @@ __all__ = (
 import secrets
 from typing import Tuple
 
-from util import Binary
+from nami.util import Binary
 
 
 class OneTimePad:

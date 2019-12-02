@@ -14,7 +14,7 @@ __all__ = (
 
 import hashlib
 
-from util import Binary
+from nami.util import Binary
 
 
 class HmacWithSha256:
