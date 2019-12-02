@@ -1,10 +1,7 @@
 import base64
 import pytest
 
-from base64_ import b64decode, b64encode
-
-
-"""test for base64_.py"""
+from nami.base64_ import b64decode, b64encode
 
 
 @pytest.mark.parametrize('str_', (
