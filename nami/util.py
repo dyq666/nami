@@ -24,6 +24,21 @@ Seq = Union[str, bytes, list, tuple]
 class Binary:
     """copy from https://github.com/dyq666/sanji"""
 
+    xor_map = {
+        ('0', '0'): '0',
+        ('0', '1'): '1',
+        ('1', '0'): '1',
+        ('1', '1'): '0',
+    }
+
+    @classmethod
+    def str_xor(cls, s1: str, s2: str) -> str:
+        """XOR 两个 8 位二进制字符串."""
+        if len(s1) != len(s2):
+            raise ValueError
+
+        return ''.join(cls.xor_map[item] for item in zip(s1, s2))
+
     @classmethod
     def bytes_xor(cls, b1: bytes, b2: bytes) -> bytes:
         """XOR 两个字节序列."""
