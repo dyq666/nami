@@ -38,7 +38,7 @@ class TestAESMode:
         ciphertext = aes.encrypt(plain_1 + plain_2)
         cipher_1, cipher_2 = ciphertext[:AES.BLOCK_SIZE], ciphertext[AES.BLOCK_SIZE:]
         assert cipher_1 != cipher_2
-        # 第一组加密的结果作为第二组的 iv 对第二组加密, 和两组一起加密的结果相同.
+        # 第一组加密的结果作为第二组的 iv, 和两组一起加密的结果相同.
         aes = AES(modes.CBC(cipher_1), key=key)
         assert aes.encrypt(plain_1) == cipher_2
 
@@ -47,7 +47,7 @@ class TestAESMode:
         with pytest.raises(ValueError):
             aes.encrypt(msg)
 
-        # 先与前一组 xor 后加密.
+        # 前一组密文与明文分组 xor 后再加密, 得到新的密文分组.
         msg = b'1' * AES.BLOCK_SIZE
         msg1 = Binary.bytes_xor(msg, iv)
         assert AES(modes.CBC(iv), key=key).encrypt(msg) == AES(modes.ECB(), key=key).encrypt(msg1)
@@ -57,7 +57,7 @@ class TestAESMode:
         aes = AES(modes.CFB(iv), key)
         assert aes.encrypt(b'1')
 
-        # 前一组先加密再 xor.
+        # 前一组密文加密后再与明文分组 xor, 得到新的密文分组.
         iv = secrets.token_bytes(AES.BLOCK_SIZE)
         key = secrets.token_bytes(32)
         cfb = AES(modes.CFB(iv), key=key)
@@ -73,15 +73,15 @@ class TestAESMode:
         aes = AES(modes.OFB(iv), key)
         assert aes.encrypt(b'1')
 
-        # 前一组先加密再 xor.
+        # 密钥可以不依赖前一组密文而单独生成.
         iv = secrets.token_bytes(AES.BLOCK_SIZE)
         key = secrets.token_bytes(32)
-        cfb = AES(modes.OFB(iv), key=key)
         ecb = AES(modes.ECB(), key=key)
-        msg1, msg2 = b'1' * AES.BLOCK_SIZE, b'2' * AES.BLOCK_SIZE
-        cipher = cfb.encrypt(msg1 + msg2)
-        cipher1, cipher2 = cipher[:AES.BLOCK_SIZE], cipher[AES.BLOCK_SIZE:]
         key1 = ecb.encrypt(iv)
         key2 = ecb.encrypt(key1)
+        ofb = AES(modes.OFB(iv), key=key)
+        msg1, msg2 = b'1' * AES.BLOCK_SIZE, b'2' * AES.BLOCK_SIZE
+        cipher = ofb.encrypt(msg1 + msg2)
+        cipher1, cipher2 = cipher[:AES.BLOCK_SIZE], cipher[AES.BLOCK_SIZE:]
         assert cipher1 == Binary.bytes_xor(key1, msg1)
         assert cipher2 == Binary.bytes_xor(key2, msg2)
