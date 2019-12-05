@@ -1,6 +1,7 @@
 import pytest
 
 from nami.symmetric import Feistel, OneTimePad
+from nami.util import Binary
 
 
 def test_oneTimePad():
@@ -17,9 +18,16 @@ def test_oneTimePad():
         assert pad2.decrypt(pad2.encrypt(msg)) == msg
 
 
-def test_Feistel():
-    feistel = Feistel(10)
-    plaintext = 'ab'.encode()
+@pytest.mark.parametrize('algorithm', (
+    lambda x, y: Binary.bytes_xor(x, y),
+    lambda x, y: Binary.bytes_xor(10 * x, y),
+))
+@pytest.mark.parametrize('msg', (b'12', b'1234'))
+@pytest.mark.parametrize('count', (9, 10))
+def test_Feistel(algorithm, msg, count):
+    key = Feistel.generate_key(len(msg) // 2)
+    feistel = Feistel(key, count=count, algorithm=algorithm)
 
-    ciphertext = feistel.encrypt(plaintext)
-    assert feistel.decrypt(ciphertext) == plaintext
+    ciphertext = feistel.encrypt(msg)
+    res = feistel.decrypt(ciphertext)
+    assert res == msg

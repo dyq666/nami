@@ -6,10 +6,11 @@
 
 demos:
   - P47 编码 midnight. `encode_midnight`
-  - P47 测验, 凯撒密码平移 3 个字母. `caesar_cipher`
+  - P47 测验一, 凯撒密码平移 3 个字母. `caesar_cipher`
   - P47 XOR 运算规则. `xor_rule`
   - P48 比特序列的 XOR. `bit_xor`
-  - P50 一次性密码本 `OneTimePad`
+  - P50 一次性密码本. `OneTimePad`
+  - P54 Feistel 网络. `Feistel`
 """
 
 __all__ = (
@@ -18,6 +19,7 @@ __all__ = (
 )
 
 import secrets
+from typing import Tuple
 
 from nami.util import Binary
 
@@ -83,8 +85,8 @@ class OneTimePad:
 
     decrypt = encrypt
 
-    @classmethod
-    def generate_key(cls, length) -> bytes:
+    @staticmethod
+    def generate_key(length) -> bytes:
         return secrets.token_bytes(length)
 
 
@@ -92,27 +94,36 @@ class Feistel:
     """Feistel 网络的简化版.
 
     在简化版中有如下的规则:
-
-      1. key 的值固定是 255, 因此长度是 1 字节.
-      2. 明文必须是 2 字节长度.
-      3. 轮转算法固定为 y = x.
+      1. 明文长度必须被 2 整除.
+      2. 密钥长度是明文长度的一半.
+      3. 轮转算法 `algorithm` 必须返回 `bytes` 类型, 并且输出的长度必须大于等于明文长度的一半.
+      4. 所有子密钥相同.
     """
 
-    def __init__(self, count: int):
+    def __init__(self, key: bytes, count: int, algorithm: callable):
         self.count = count
-        self.key = 255
-        self.algorithm = lambda x: x
+        self.key = key
+        self.algorithm = algorithm
 
-    def round(self, l, r):
-        new_l = self.algorithm(self.key ^ r) ^ l
+    def round(self, l: bytes, r: bytes) -> Tuple[bytes, bytes]:
+        """一轮."""
+        new_l = Binary.bytes_xor(self.algorithm(self.key, r), l)
         return new_l, r
 
     def encrypt(self, msg: bytes) -> bytes:
-        group = list(msg)
+        if len(msg) % 2 != 0:
+            raise ValueError
+
+        # 由于每次循环都会 `reverse`, 但第一轮是不需要 `reverse`,
+        # 因此第一轮前先 `reverse` 一次, 抵消掉循环中的 `reverse`.
+        group = msg[len(msg) // 2:], msg[:len(msg) // 2]
         for i in range(self.count):
-            if i != 0:
-                group = reversed(group)
+            group = reversed(group)
             group = self.round(*group)
-        return bytes(group)
+        return b''.join(group)
 
     decrypt = encrypt
+
+    @staticmethod
+    def generate_key(length: int) -> bytes:
+        return secrets.token_bytes(length)
