@@ -1,24 +1,11 @@
-"""分组密码的模式
+"""分组密码的模式.
 
-ECB (Electronic CodeBook), 所有明文分组独自加密.
 
-CBC (Cipher Block Chaining), 前一个密文分组与当前的明文分组 XOR 后再加密.
-
-CFB (Cipher FeedBack), 前一个密文分组加密后再与当前的明文分组 XOR.
-
-OFB (Output FeedBack), 从 iv 开始无限加密, 每次加密后的结果与明文分组 XOR.
-
-CTR (Counter), 每次加密计数器后的结果与明文分组 XOR.
-
-目前只有 ECB 是不能被使用的, 其他均可使用, 但使用最多的是 CBC.
-```
 """
 
 __all__ = (
     'AES',
 )
-
-import secrets
 
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms
@@ -31,8 +18,7 @@ class AES:
 
     BLOCK_SIZE = 16
 
-    def __init__(self, mode, key: bytes = None):
-        key = secrets.token_bytes(32) if key is None else key
+    def __init__(self, mode, key: bytes):
         self.cipher = Cipher(
             algorithm=algorithms.AES(key),
             mode=mode,
