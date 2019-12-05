@@ -1,4 +1,24 @@
-from nami.asymmetric import Mod12
+from nami.asymmetric import Mod12, KeyCenter
+
+
+def test_KeyCenter():
+    """模拟一次 alice 和 bob 的通信."""
+    alice, bob = 'alice', 'bob'
+
+    # 会话中心生成会密钥s
+    session_key = KeyCenter.generate_session_key()
+    # 取出 alice 和 bob 的密钥
+    alice_key = KeyCenter.get_key(alice)
+    bob_key = KeyCenter.get_key(bob)
+    # 用 alice 和 bob 的密钥加密会话密钥
+    to_alice_key = KeyCenter.encrypt(alice_key, session_key)
+    to_bob_key = KeyCenter.encrypt(bob_key, session_key)
+
+    # alice 解密获得会话密钥
+    assert KeyCenter.decrypt(alice_key, to_alice_key) == session_key
+
+    # bob 解密获得会话密钥
+    assert KeyCenter.decrypt(bob_key, to_bob_key) == session_key
 
 
 class TestMod12:
