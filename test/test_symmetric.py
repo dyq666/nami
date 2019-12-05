@@ -1,6 +1,6 @@
 import pytest
 
-from nami.symmetric import Feistel, OneTimePad
+from nami.symmetric import Feistel, OneTimePad, TripleDES
 from nami.util import Binary
 
 
@@ -31,3 +31,10 @@ def test_Feistel(algorithm, msg, count):
     ciphertext = feistel.encrypt(msg)
     res = feistel.decrypt(ciphertext)
     assert res == msg
+
+
+@pytest.mark.parametrize('msg', (b'1', b'1' * TripleDES.BLOCK_SIZE))
+def test_aes(msg):
+    key, iv = TripleDES.generate_key()
+    aes = TripleDES(key, iv)
+    assert aes.decrypt(aes.encrypt(msg)) == msg

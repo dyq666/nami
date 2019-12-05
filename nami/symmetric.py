@@ -11,17 +11,23 @@ demos:
   - P48 比特序列的 XOR. `bit_xor`
   - P50 一次性密码本. `OneTimePad`
   - P54 Feistel 网络. `Feistel`
+  - P61 三重 DES. `TripleDES`
 """
 
 __all__ = (
     'Feistel',
     'OneTimePad',
+    'TripleDES',
 )
 
 import secrets
 from typing import Tuple
 
 from nami.util import Binary
+
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import padding
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
 
 def encode_midnight():
@@ -127,3 +133,33 @@ class Feistel:
     @staticmethod
     def generate_key(length: int) -> bytes:
         return secrets.token_bytes(length)
+
+
+class TripleDES:
+    """三重 DES."""
+
+    BLOCK_SIZE = 8  # algorithms.TripleDES.block_size / 8
+
+    def __init__(self, key: bytes, iv: bytes):
+        self.cipher = Cipher(
+            algorithm=algorithms.TripleDES(key),
+            mode=modes.CBC(iv),
+            backend=default_backend(),
+        )
+        self.padding = padding.PKCS7(algorithms.AES.block_size)
+
+    def encrypt(self, msg: bytes) -> bytes:
+        encryptor = self.cipher.encryptor()
+        padder = self.padding.padder()
+        msg = padder.update(msg) + padder.finalize()
+        return encryptor.update(msg) + encryptor.finalize()
+
+    def decrypt(self, msg: bytes) -> bytes:
+        decryptor = self.cipher.decryptor()
+        unpadder = self.padding.unpadder()
+        msg = decryptor.update(msg) + decryptor.finalize()
+        return unpadder.update(msg) + unpadder.finalize()
+
+    @classmethod
+    def generate_key(cls) -> Tuple[bytes, bytes]:
+        return secrets.token_bytes(24), secrets.token_bytes(cls.BLOCK_SIZE)
