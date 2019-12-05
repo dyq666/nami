@@ -1,5 +1,4 @@
 from nami.asymmetric import Mod12
-from nami.util import RSAPrivateKey, RSAPublicKey
 
 
 class TestMod12:
@@ -78,18 +77,3 @@ class TestMod12:
         assert x ** Mod12(9) == Mod12(7)
         assert x ** Mod12(10) == Mod12(1)
         assert x ** Mod12(11) == Mod12(7)
-
-
-class TestRsa:
-
-    def test_load_private_key(self):
-        """load 后的 private key 应该生成一样的 public key"""
-        private_key = RSAPrivateKey.generate()
-        private_key2 = RSAPrivateKey.load(private_key.format_private_key())
-        assert private_key.format_public_key() == private_key2.format_public_key()
-
-    def test_encrpty_and_decrpty(self):
-        content = '带带我666'.encode()
-        private_key = RSAPrivateKey.generate()
-        public_key = RSAPublicKey.load(private_key.format_public_key())
-        assert private_key.decrypt(public_key.encrypt(content)) == content
