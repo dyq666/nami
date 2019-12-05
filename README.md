@@ -17,4 +17,7 @@
   - [ ] 13.PGP
   - [ ] 14.SSL/TLS
 
-  - 番外1.Base64 nami/base64_
+番外:
+  - 1.Base64 nami/base64_
+
+一些章节和番外的代码是有测试用例的在 test/test_{module_name}.
