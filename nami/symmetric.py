@@ -1,10 +1,6 @@
 """对称密码.
 
-对称密码中加密和解密使用同一个密钥.
-
-目前安全和最常用的是 AES.
-
-demos:
+demo:
   - P47 编码 midnight. `encode_midnight`
   - P47 测验一, 凯撒密码平移 3 个字母. `caesar_cipher`
   - P47 XOR 运算规则. `xor_rule`
@@ -12,6 +8,9 @@ demos:
   - P50 一次性密码本. `OneTimePad`
   - P54 Feistel 网络. `Feistel`
   - P61 三重 DES. `TripleDES`
+
+AES 的最终实现涉及第四章内容, 而且 AES 可以用于生产环境所以放到了:
+https://github.com/dyq666/sanji/blob/master/util/third_cryptography.py
 """
 
 __all__ = (
