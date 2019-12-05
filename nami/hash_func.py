@@ -1,20 +1,21 @@
 """单向散列函数.
 
-主要用途是辨别消息是否被篡改.
-
-目前比较安全的是 SHA 二代和三代, 例如 `from hashlib import sha256, sha3_256`.
-
-主要原理是将数据压缩成更小的数据 (散列值) 便于快速比较, 相同数据散列值必须相同,
-不同数据散列值必定不同 (理论上是不可能满足 "必定" 不同的, 因为散列值长度固定,
-意味着只存在有限种数据, 但只要有限种在人类的角度上是无限种即可).
+demo:
+  - P158 sha256 的散列值长度. `sha256_demo`
+  - P180 生日攻击. `BirthdayParadox`
 """
 
 __all__ = (
     'BirthdayParadox',
 )
 
+import hashlib
 from functools import partialmethod, reduce
 from operator import mul
+
+
+def sha256_demo():
+    print(len(hashlib.sha256().digest()) * 8)
 
 
 class BirthdayParadox:
