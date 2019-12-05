@@ -3,7 +3,7 @@
 demo:
   - P79 ECB 模式. `test/test_block_mode/test_ecb_mode`
   - P82 CBC 模式. `test/test_block_mode/test_cbc_mode`
-  - P86 小测验 4 仿 CBC 模式.
+  - P86 小测验 4 仿 CBC 模式. `test/test_block_mode/test_fake_cbc_mode`
   - P88 CFB 模式. `test/test_block_mode/test_cfb_mode`
   - P91 OFB 模式. `test/test_block_mode/test_ofb_mode`
 

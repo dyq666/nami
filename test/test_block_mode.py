@@ -4,7 +4,7 @@ import pytest
 from cryptography.hazmat.primitives.ciphers import modes
 
 from nami.block_mode import AES
-from nami.util import Binary
+from nami.util import Binary, seq_grouper
 
 
 class TestAESMode:
@@ -85,3 +85,24 @@ class TestAESMode:
         cipher1, cipher2 = cipher[:AES.BLOCK_SIZE], cipher[AES.BLOCK_SIZE:]
         assert cipher1 == Binary.bytes_xor(key1, msg1)
         assert cipher2 == Binary.bytes_xor(key2, msg2)
+
+    def test_fake_cbc_mode(self, key, iv):
+        plains = b'1' * AES.BLOCK_SIZE * 3
+        aes = AES(modes.ECB(), key)
+        mids = aes.encrypt(plains)
+
+        # 加密者加密后发现密文不同.
+        mid1, mid2, mid3 = tuple(seq_grouper(mids, size=AES.BLOCK_SIZE))
+        assert mid1 == mid2 == mid3
+        cipher1 = Binary.bytes_xor(iv, mid1)
+        cipher2 = Binary.bytes_xor(cipher1, mid2)
+        cipher3 = Binary.bytes_xor(cipher2, mid3)
+        assert cipher1 != cipher2 != cipher3
+
+        # 攻击者是可以拿到密文和 iv 的, 而通过 iv 和密文就可以获得中间状态.
+        # 而这个中间状态实际上是 ECB 加密的结果, 因此明文分组先加密再与前一个密文分组 xor 和
+        # 不做 xor 是等价的.
+        res1 = Binary.bytes_xor(iv, cipher1)
+        res2 = Binary.bytes_xor(cipher1, cipher2)
+        res3 = Binary.bytes_xor(cipher2, cipher3)
+        assert res1 == res2 == res3 == mid1
